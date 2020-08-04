@@ -68,7 +68,7 @@ gcloud pubsub topics create ${TOPIC_NAME}
 
 Find your project’s billing account ID with the following command. Copy the billing account ID to move on to the next step. 
 ```sh
-gcloud beta billing projects describe <PROJECT_ID> | grep billingAccountName
+gcloud beta billing projects describe {{project-id}}  | grep billingAccountName
 ```
 
 Replace <BILLING_ID> with your project’s billing account ID. 
