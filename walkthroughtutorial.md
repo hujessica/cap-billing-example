@@ -92,7 +92,7 @@ gcloud alpha billing budgets create \
 --all-updates-rule-pubsub-topic="projects/${GOOGLE_CLOUD_PROJECT}/topics/${TOPIC_NAME}"
 ```
 
-## Create the function
+## Deploy the function
 
 ```sh
 gcloud functions deploy ${FUNCTION_NAME} \
@@ -110,3 +110,22 @@ ${GOOGLE_CLOUD_PROJECT} \
 --member='serviceAccount:'${GOOGLE_CLOUD_PROJECT}'@appspot.gserviceaccount.com' \
 --role='roles/owner'
 ```
+
+## Verify that Cloud Billing is disabled
+
+To ensure that Cloud Billing has been successfully disabled on your project, publish a sample message in Pub/Sub with the test message below. If successful, the project will no longer be visible under the Cloud Billing account and resources in the project will be disabled. 
+
+```sh
+gcloud pubsub topics publish ${TOPIC_NAME} --message='{"costAmount": 100.01,"budgetAmount": 100.00}'
+```
+
+**Next: Wrapping up** 
+
+## Congratulations!
+
+You’ve completed the Cap Billing walkthrough! 
+
+**What's Next** 
+
+
+
