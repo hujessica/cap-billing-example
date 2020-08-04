@@ -14,11 +14,6 @@ As you complete this guide, you will learn the following skills:
 + Connecting a billing account to a Pub/Sub topic
 + Deploying a function
 
-After completing this tutorial, you can explore other examples
-of automating cost controls using the skills learned:
-+ [Sending notifications to Slack](https://cloud.google.com/billing/docs/how-to/notify#send_notifications_to_slack)
-+ [Selectively controlling usage of resources](https://cloud.google.com/billing/docs/how-to/notify#selectively_control_usage)
-
 **Time to complete:** About 10 minutes
 
 ## Getting started 
@@ -127,5 +122,7 @@ You’ve completed the Cap Billing walkthrough!
 
 **What's Next** 
 
-
+Here are some areas to explore to learn more about automating cost controls:
++ [Sending notifications to Slack](https://cloud.google.com/billing/docs/how-to/notify#send_notifications_to_slack)
++ [Selectively controlling usage of resources](https://cloud.google.com/billing/docs/how-to/notify#selectively_control_usage)
 
