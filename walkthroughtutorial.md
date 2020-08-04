@@ -125,4 +125,3 @@ You’ve completed the Cap Billing walkthrough!
 Here are some areas to explore to learn more about automating cost controls:
 + [Sending notifications to Slack](https://cloud.google.com/billing/docs/how-to/notify#send_notifications_to_slack)
 + [Selectively controlling usage of resources](https://cloud.google.com/billing/docs/how-to/notify#selectively_control_usage)
-
