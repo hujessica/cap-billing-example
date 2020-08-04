@@ -28,11 +28,14 @@ of automating cost controls using the skills learned:
 Before you attempt this tutorial, you will need:
 + An [active Cloud billing account](https://cloud.google.com/billing/docs/how-to/manage-billing-account#create_a_new_billing_account), where you are a billing admin, or you have been granted the correct level of permissions to complete the steps in this tutorial.
 
-### Select a project
+## Select a project
 
 Caution: Using this method will remove Cloud Billing from your project, shutting down all resources. 
 This may result in resources being irretrievably deleted, with no option to recover services. 
 You can re-enable Cloud Billing, but there is no guarantee of service recovery and manual configuration is required. 
+
+We recommend that you configure a separate, single Google Cloud project to contain all of your billing administration needs, including your Cloud Billing-related Pub/Sub topics. 
+Your billing administration Google Cloud project can also be used for things like Cloud Billing Budget API access, Cloud Billing Account API access, Cloud Billing exported data, and so on.
 
 For this tutorial, [create a new project](https://cloud.google.com/resource-manager/docs/creating-managing-projects#console) in Google Cloud Console for testing purposes. 
 
@@ -40,10 +43,15 @@ For this tutorial, [create a new project](https://cloud.google.com/resource-mana
 
 ## Setup
 
-Set up a default project ID so that you do not need to provide them in commands where those values are required. Replace {{project-id}} with your project’s ID. 
+Set up a default project ID so that you do not need to provide them in commands where those values are required. 
 
 ```sh   
 gcloud config set project {{project-id}}  
+```
+
+Enable the Billing Budgets, Cloud Functions, and Cloud Billing APIs, which you will need for this tutorial. 
+```sh
+gcloud services enable billingbudgets.googleapis.com cloudfunctions.googleapis.com cloudbilling.googleapis.com
 ```
 
 Set up names for your budget, Pub/Sub topic, and function.
@@ -52,3 +60,24 @@ export BUDGET_NAME=billing_cap_budget
 export TOPIC_NAME=budget-notification
 export FUNCTION_NAME=stop_billing
 ``` 
+## Setting up programmatic notifications
+To set up **programmatic budget notifications**, you will need to create a Pub/Sub topic, create a Cloud Billing budget, and connect the Cloud Billing budget to the Pub/Sub topic. 
+
+## Create a Pub/Sub topic
+Create a Pub/Sub topic so that Cloud Billing can publish budget alerts to the topic. 
+```sh
+gcloud pubsub topics create ${TOPIC_NAME}
+```
+
+## Connect a billing account
+
+Find your project’s billing account ID with the following command. Copy the billing account ID to move on to the next step. 
+```sh
+gcloud beta billing projects describe <PROJECT_ID> | grep billingAccountName
+```
+
+Replace <BILLING_ID> with your project’s billing account ID. 
+```sh
+export BILLING_ACCOUNT=<BILLING_ID>
+```
+
