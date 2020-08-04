@@ -81,3 +81,32 @@ Replace <BILLING_ID> with your project’s billing account ID.
 export BILLING_ACCOUNT=<BILLING_ID>
 ```
 
+## Create a budget
+
+Create a test budget of $100 that is associated with your project’s billing account. This command also specifies the Pub/Sub topic where budget related messages will be sent. 
+```sh
+gcloud alpha billing budgets create \
+--billing-account=${BILLING_ACCOUNT} \
+--display-name=${BUDGET_NAME} \
+--budget-amount=100 \
+--all-updates-rule-pubsub-topic="projects/${GOOGLE_CLOUD_PROJECT}/topics/${TOPIC_NAME}"
+```
+
+## Create the function
+
+```sh
+gcloud functions deploy ${FUNCTION_NAME} \
+--runtime=python37 --source=./sample_code \
+--trigger-topic=${TOPIC_NAME}
+```
+
+## Configure service account permissions
+
+Your function runs as an automatically created service account. You must grant the service account the proper permissions so that it can disable billing, such as the Billing Admin role. 
+
+```sh
+gcloud projects add-iam-policy-binding \
+${GOOGLE_CLOUD_PROJECT} \
+--member='serviceAccount:'${GOOGLE_CLOUD_PROJECT}'@appspot.gserviceaccount.com' \
+--role='roles/owner'
+```
