@@ -25,7 +25,7 @@ Before you attempt this tutorial, you will need:
 
 ## Select a project
 
-Caution: Using this method will remove Cloud Billing from your project, shutting down all resources. 
+**Caution:** Using the cap billing example will remove Cloud Billing from your project, shutting down all resources. 
 This may result in resources being irretrievably deleted, with no option to recover services. 
 You can re-enable Cloud Billing, but there is no guarantee of service recovery and manual configuration is required. 
 
@@ -44,29 +44,34 @@ Set up a default project ID so that you do not need to provide them in commands 
 gcloud config set project {{project-id}}  
 ```
 
-Enable the Billing Budgets, Cloud Functions, and Cloud Billing APIs, which you will need for this tutorial. 
+Enable the Billing Budgets, Cloud Functions, Cloud Billing, and Build APIs, which you will need for this tutorial. 
 ```sh
-gcloud services enable billingbudgets.googleapis.com cloudfunctions.googleapis.com cloudbilling.googleapis.com
+gcloud services enable billingbudgets.googleapis.com cloudfunctions.googleapis.com cloudbilling.googleapis.com build.googleapis.com
 ```
 
-Set up names for your budget, Pub/Sub topic, and function.
+Set up environment variables for your budget, Pub/Sub topic, and function.
 ```sh
 export BUDGET_NAME=billing_cap_budget
 export TOPIC_NAME=budget-notification
 export FUNCTION_NAME=stop_billing
 ``` 
-## Setting up programmatic notifications
-To set up **programmatic budget notifications**, you will need to create a Pub/Sub topic, create a Cloud Billing budget, and connect the Cloud Billing budget to the Pub/Sub topic. 
 
-## Create a Pub/Sub topic
+Next: Learn how to set up programmatic budget notifications
+
+## Set up programmatic notifications
+To set up **programmatic budget notifications**, you must create a Pub/Sub topic, create a Cloud Billing budget, and connect the Cloud Billing budget to the Pub/Sub topic. 
+
+### Create a Pub/Sub topic
 Create a Pub/Sub topic so that Cloud Billing can publish budget alerts to the topic. 
 ```sh
 gcloud pubsub topics create ${TOPIC_NAME}
 ```
 
-## Connect a billing account
+### Connect a billing account
 
 Find your project’s billing account ID with the following command. Copy the billing account ID. 
+
+**Note:** If you don’t see a billing account ID, make sure your project is attached to a billing account.
 ```sh
 gcloud beta billing projects describe {{project-id}} | grep billingAccountName
 ```
@@ -86,6 +91,7 @@ gcloud alpha billing budgets create \
 --budget-amount=100 \
 --all-updates-rule-pubsub-topic="projects/${GOOGLE_CLOUD_PROJECT}/topics/${TOPIC_NAME}"
 ```
+Next: Learn more about the cap billing function and how to deploy it
 
 ## Deploy the function
 
