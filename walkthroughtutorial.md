@@ -51,9 +51,9 @@ Set up a default project ID so that you do not need to provide them in commands 
 gcloud config set project {{project-id}}  
 ```
 
-Enable the Billing Budgets, Cloud Functions, Cloud Billing, and Build APIs, which you will need for this tutorial. 
+Enable the Billing Budgets, Cloud Functions, Cloud Billing, and Cloud Build APIs, which you will need for this tutorial. 
 ```sh
-gcloud services enable billingbudgets.googleapis.com cloudfunctions.googleapis.com cloudbilling.googleapis.com build.googleapis.com
+gcloud services enable billingbudgets.googleapis.com cloudfunctions.googleapis.com cloudbilling.googleapis.com cloudbuild.googleapis.com
 ```
 
 Set up environment variables for your budget, Pub/Sub topic, and function.
@@ -63,7 +63,7 @@ export TOPIC_NAME=budget-notification
 export FUNCTION_NAME=stop_billing
 ``` 
 
-**Next:** Learn how to set up programmatic budget notifications
+**Next: Learn how to set up programmatic budget notifications**
 
 ## Set up programmatic notifications
 To set up **programmatic budget notifications**, you must create a Pub/Sub topic, create a Cloud Billing budget, and connect the Cloud Billing budget to the Pub/Sub topic. 
@@ -87,7 +87,7 @@ Replace <BILLING_ID> with your project’s billing account ID.
 ```sh
 export BILLING_ACCOUNT=<BILLING_ID>
 ```
-**Next:** Learn how to create a budget
+**Next: Learn how to create a budget**
 
 ## Create a budget
 
@@ -100,7 +100,7 @@ gcloud alpha billing budgets create \
 --all-updates-rule-pubsub-topic="projects/${GOOGLE_CLOUD_PROJECT}/topics/${TOPIC_NAME}"
 ```
 
-**Next:** Learn more about the cap billing function and how to deploy it
+**Next: Learn more about the cap billing function and how to deploy it**
 
 ## Deploy the function
 
@@ -109,7 +109,7 @@ gcloud functions deploy ${FUNCTION_NAME} \
 --runtime=python37 --source=./sample_code \
 --trigger-topic=${TOPIC_NAME}
 ```
-**Next:** Learn about service account permissions and how to configure them
+**Next: Learn about service account permissions and how to configure them**
 
 ## Configure service account permissions
 
@@ -121,19 +121,26 @@ ${GOOGLE_CLOUD_PROJECT} \
 --member='serviceAccount:'${GOOGLE_CLOUD_PROJECT}'@appspot.gserviceaccount.com' \
 --role='roles/owner'
 ```
-**Next: Publish a sample message to verify that Cloud Billing is disabled**
+**Next: Verify that Cloud Billing is disabled**
 
 ## Verify that Cloud Billing is disabled
 
-To disable Cloud Billing on your project, publish a sample message in Pub/Sub with the test message below. If successful, the project will no longer be visible under the Cloud Billing account and resources in the project will be disabled. 
+To disable Cloud Billing on your project, publish a sample message in Pub/Sub with the test message below. If successful, the project will no longer be visible under the billing account and resources in the project will be disabled. 
 
 ```sh
 gcloud pubsub topics publish ${TOPIC_NAME} --message='{"costAmount": 100.01,"budgetAmount": 100.00}'
 ```
 
+Check that your billing account has been removed with this command. If the output is blank, then you have successfully disabled Cloud Billing. 
+```sh
+gcloud beta billing projects describe {{project-id}} | grep billingAccountName
+```
+
 **Next: Wrapping up** 
 
 ## Congratulations!
+
+<walkthrough-conclusion-trophy></walkthrough-conclusion-trophy>
 
 You’ve completed the Cap Billing walkthrough! 
 
