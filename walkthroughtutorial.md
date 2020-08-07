@@ -23,16 +23,23 @@ As you complete this guide, you will learn the following skills:
 Before you attempt this tutorial, you will need:
 + An [active Cloud billing account](https://cloud.google.com/billing/docs/how-to/manage-billing-account#create_a_new_billing_account), where you are a billing admin, or you have been granted the correct level of permissions to complete the steps in this tutorial.
 
-## Select a project
+## Understand best practices
+We recommend that you configure a separate, single Google Cloud project to contain all of your billing administration needs, including your Cloud Billing-related Pub/Sub topics. Your billing administration Google Cloud project can also be used for things like Cloud Billing Budget API access, Cloud Billing Account API access, Cloud Billing exported data, and so on.
 
-**Caution:** Using the cap billing example will remove Cloud Billing from your project, shutting down all resources. 
-This may result in resources being irretrievably deleted, with no option to recover services. 
-You can re-enable Cloud Billing, but there is no guarantee of service recovery and manual configuration is required. 
+## Select a test project 
+For this tutorial, select or create a test project. The function will be acting on this project, not the billing administration project.  
 
-We recommend that you configure a separate, single Google Cloud project to contain all of your billing administration needs, including your Cloud Billing-related Pub/Sub topics. 
-Your billing administration Google Cloud project can also be used for things like Cloud Billing Budget API access, Cloud Billing Account API access, Cloud Billing exported data, and so on.
+**Caution:** Using the cap billing example will remove Cloud Billing from your project, shutting down all resources. This may result in resources being irretrievably deleted, with no option to recover services. You can re-enable Cloud Billing, but there is no guarantee of service recovery and manual configuration is required.
 
-For this tutorial, [create a new project](https://cloud.google.com/resource-manager/docs/creating-managing-projects#console) in Google Cloud Console for testing purposes. 
+<walkthrough-project-setup></walkthrough-project-setup> 
+
+```sh
+export GCP_PROJECT={{project_id}}
+```
+
+## Select a billing administration project
+ 
+For this tutorial, create a new billing administration project.
 
 <walkthrough-project-setup></walkthrough-project-setup> 
 
@@ -56,7 +63,7 @@ export TOPIC_NAME=budget-notification
 export FUNCTION_NAME=stop_billing
 ``` 
 
-Next: Learn how to set up programmatic budget notifications
+**Next:** Learn how to set up programmatic budget notifications
 
 ## Set up programmatic notifications
 To set up **programmatic budget notifications**, you must create a Pub/Sub topic, create a Cloud Billing budget, and connect the Cloud Billing budget to the Pub/Sub topic. 
@@ -80,6 +87,7 @@ Replace <BILLING_ID> with your project’s billing account ID.
 ```sh
 export BILLING_ACCOUNT=<BILLING_ID>
 ```
+**Next:** Learn how to create a budget
 
 ## Create a budget
 
@@ -91,7 +99,8 @@ gcloud alpha billing budgets create \
 --budget-amount=100 \
 --all-updates-rule-pubsub-topic="projects/${GOOGLE_CLOUD_PROJECT}/topics/${TOPIC_NAME}"
 ```
-Next: Learn more about the cap billing function and how to deploy it
+
+**Next:** Learn more about the cap billing function and how to deploy it
 
 ## Deploy the function
 
@@ -100,10 +109,11 @@ gcloud functions deploy ${FUNCTION_NAME} \
 --runtime=python37 --source=./sample_code \
 --trigger-topic=${TOPIC_NAME}
 ```
+**Next:** Learn about service account permissions and how to configure them
 
 ## Configure service account permissions
 
-Your function runs as an automatically created service account. You must grant the service account the proper permissions so that it can disable billing, such as the Billing Admin role. 
+During the creation, updating, or deletion of a function, the Cloud Functions service uses the Google Cloud Functions service agent service account. You must grant the service account the proper permissions so that it can disable billing, such as the Billing Admin role. 
 
 ```sh
 gcloud projects add-iam-policy-binding \
@@ -111,10 +121,11 @@ ${GOOGLE_CLOUD_PROJECT} \
 --member='serviceAccount:'${GOOGLE_CLOUD_PROJECT}'@appspot.gserviceaccount.com' \
 --role='roles/owner'
 ```
+**Next: Publish a sample message to verify that Cloud Billing is disabled**
 
 ## Verify that Cloud Billing is disabled
 
-To ensure that Cloud Billing has been successfully disabled on your project, publish a sample message in Pub/Sub with the test message below. If successful, the project will no longer be visible under the Cloud Billing account and resources in the project will be disabled. 
+To disable Cloud Billing on your project, publish a sample message in Pub/Sub with the test message below. If successful, the project will no longer be visible under the Cloud Billing account and resources in the project will be disabled. 
 
 ```sh
 gcloud pubsub topics publish ${TOPIC_NAME} --message='{"costAmount": 100.01,"budgetAmount": 100.00}'
