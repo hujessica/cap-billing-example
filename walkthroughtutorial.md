@@ -104,6 +104,7 @@ gcloud alpha billing budgets create \
 
 ## Deploy the function
 
+This function will remove the billing account associated with the project. 
 ```sh
 gcloud functions deploy ${FUNCTION_NAME} \
 --runtime=python37 --source=./sample_code \
